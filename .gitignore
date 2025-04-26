@@ -1,0 +1,38 @@
+# Rust, Cargo
+/target/                 
+**/*.rs.bk               
+Cargo.lock               
+
+# Editors
+.vscode/
+*.code-workspace
+.idea/
+*.sublime-project
+*.sublime-workspace
+.atom/
+*~                      # swap / backup
+*.swp
+*.swo
+*.un~
+.session
+.nvimlog
+
+# OS
+.DS_Store               
+Thumbs.db              
+ehthumbs.db
+Icon?
+._*                     
+
+# Tooling, CI
+/coverage/              
+/bench_results/         
+/lcov.info
+/pytest_cache/          
+/.cargo/config.toml     
+
+# Logs, Misc
+*.log
+*.tmp
+*.bak
+*.old

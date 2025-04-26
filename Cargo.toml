@@ -1,0 +1,7 @@
+[package]
+name = "file-editor"
+edition = "2024"
+description = "Clean, elegant API for creating and editing text files"
+license = "MIT"
+
+[dependencies]
