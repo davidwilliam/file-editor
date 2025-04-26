@@ -38,3 +38,5 @@ Icon?
 *.old
 
 demo.txt
+/examples/sandbox/*
+!/examples/sandbox/.gitkeep

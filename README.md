@@ -1,89 +1,96 @@
-# file-editor &nbsp;📄✏️
+# file-editor
 
-Clean, chain-friendly text-file editing for Rust • **edition 2024**
+Clean, chain-friendly **text-file editing for Rust** • *edition&nbsp;2024*
 
-`file-editor` is a tiny, zero-dependency library that makes it painless to create,
-modify, and query UTF-8 text files. Every mutating method returns **`&mut self`**,
-so edits compose naturally:
+`file-editor` is a zero-dependency library that makes it painless to create,
+modify and query UTF-8 text files.  
+All mutating methods return **`&mut self`**, so edits compose naturally:
 
 ```rust
 use file_editor::Editor;
 
-fn main() -> anyhow::Result<()> {
-    Editor::create("notes.txt")?          // new file
+fn main() -> std::io::Result<()> {
+    Editor::create("notes.txt")?               // new file
         .append("Rust 🦀 is fun\n")
         .prepend("# My Notes\n")
         .insert_after("# My Notes", "========\n", true)
         .replace("fun", "blazingly fast")
-        .save()?;                         // explicit flush
+        .save()?;                              // explicit flush
     Ok(())
 }
 ```
 
-## Features
+## Feature table
 
 | Verb | Method | Notes |
 |------|--------|-------|
-| Create / open | `Editor::create`, `Editor::open` |
-| Rename file   | `rename` |
-| Prepend / append | `prepend`, `append` |
-| Insert before / after | `insert_before`, `insert_after` <br>`same_indent` flag preserves indentation |
-| Replace marker | `replace_marker` |
-| Search | `find_lines` → 1-based line numbers |
-| Erase / replace / mask | `erase`, `replace`, `mask` |
-| Save | `save` (explicit) |
+| Create / open             | `Editor::create`, `Editor::open` |
+| Rename                    | `rename` |
+| Prepend / append          | `prepend`, `append` |
+| Insert <br>before / after | `insert_before`, `insert_after`<br>`same_indent` flag keeps indentation |
+| Replace one marker        | `replace_marker` |
+| Search pattern            | `find_lines` → 1-based line numbers |
+| Erase, replace, mask      | `erase`, `replace`, `mask` |
+| Save to disk              | `save` |
 
-### Road-map
+Road-map → *regex* feature, streaming mode, companion CLI.
 
-* Regex search / replace (opt-in `regex` feature)  
-* Streaming mode for multi-GB files  
-* Companion CLI (`cargo install file-editor-cli`)
-
-## Installation
+## Install
 
 ```bash
-cargo add file-editor      # latest published version
+cargo add file-editor          # latest on crates.io
 ```
 
-Requires Rust **1.85** or newer (edition 2024).
+Requires **Rust 1.85** (edition 2024) or newer.
 
-## 🛠️ Getting started
+## Workflow
 
 | Task | Command |
 |------|---------|
-| **Build** | `cargo build` |
-| **Run tests** | `cargo test` |
-| **Format** | `cargo fmt --all` |
-| **Lint (deny warnings)** | `cargo clippy --all-targets -- -D warnings` |
-| **Coverage (HTML report)** |<br>`cargo llvm-cov --workspace --open`<br>*(install once: `cargo install cargo-llvm-cov`)* |
+| Build | `cargo build` |
+| Run **all** tests & doctests | `cargo test` |
+| Format | `cargo fmt --all` |
+| Lint (deny warnings) | `cargo clippy --all-targets -- -D warnings` |
+| Coverage (HTML) | `cargo llvm-cov --workspace --open`<br/>*(one-time `cargo install cargo-llvm-cov`)* |
+| Generate docs | `cargo doc --no-deps --open` |
 
-CI runs the same steps on every PR (see `.github/workflows/ci.yml`).
+CI executes the same steps (see `.github/workflows/ci.yml`).
 
-## Quick recipes
+## Runnable examples
 
-| Task | Snippet |
-|------|---------|
-| Truncate or create a file | `Editor::create("foo.txt")?;` |
-| Add a license header to many files | see [`examples/bulk_header.rs`](examples/bulk_header.rs) |
-| List first 5 lines containing “TODO” | `editor.find_lines("TODO", Some(5));` |
-| Mask API keys | `editor.mask("sk_live_[A-Za-z0-9]+", "***");` |
+All live in **[`examples/`](examples/)** and write their output to
+`examples/sandbox/` (ignored by git):
 
-Full API docs live on **docs.rs**.
+| Example | Demonstrates |
+|---------|--------------|
+| `basic.rs`               | End-to-end mini workflow |
+| `create.rs`              | `create` + `append` |
+| `open_rename.rs`         | `open`, `rename` |
+| `prepend.rs`, `append.rs`| header / footer insertion |
+| `insert_before.rs`       | block insertion above a marker |
+| `insert_after.rs`        | block insertion below a marker |
+| `replace_marker.rs`      | in-place marker replacement |
+| `find_lines.rs`          | pattern search |
+| `erase.rs`               | deleting fragments |
+| `replace.rs`, `mask.rs`  | global replacements / masking |
 
----
+Run any of them with:
+
+```bash
+cargo run --example insert_after
+```
 
 ## Contributing
 
 1. Fork & clone  
 2. `cargo fmt --check && cargo clippy --all-targets -- -D warnings`  
-3. Add or update tests under `tests/` (use `tempfile`)  
-4. Open a PR with a concise description
+3. Add or update tests in `tests/` (use the `tempfile` crate)  
+4. Open a PR describing **what** and **why**
 
-All contributions are released under the **MIT** license.
+All contributions are released under the **MIT** licence.
 
----
+## Licence
 
-## License
+Copyright © 2025  
 
-`file-editor` is licensed under the MIT License.  
-See [LICENSE](LICENSE) for the full text.
+Licensed under the **MIT License**. See [`LICENSE`](LICENSE).

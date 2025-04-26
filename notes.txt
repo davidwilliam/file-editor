@@ -1,0 +1,3 @@
+# My Notes
+========
+Rust 🦀 is blazingly fast
