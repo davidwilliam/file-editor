@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push: { branches: [main] }
+  pull_request: {}
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test-lint-cov:
+    runs-on: ubuntu-latest
+
+    steps:
+    # ── Checkout ────────────────────────────────────────────────
+    - uses: actions/checkout@v4
+
+    # ── Rust toolchain (stable) + components ───────────────────
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        components: clippy, rustfmt, llvm-tools-preview
+
+    # ── Cache build artefacts ───────────────────────────────────
+    - uses: Swatinem/rust-cache@v2
+
+    # ── Format check ────────────────────────────────────────────
+    - name: rustfmt
+      run: cargo fmt --all -- --check
+
+    # ── Lint (deny warnings) ────────────────────────────────────
+    - name: clippy
+      run: cargo clippy --all-targets -- -D warnings
+
+    # ── Tests & doctests ────────────────────────────────────────
+    - name: cargo test
+      run: cargo test --all-targets --workspace
+
+    # ── Install cargo-llvm-cov (pinned) ─────────────────────────
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-llvm-cov
+        version: latest        # or e.g. 0.6
+
+    # ── Coverage (table + lcov) ─────────────────────────────────
+    - name: Generate coverage
+      run: |
+        cargo llvm-cov --workspace --lcov --output-path lcov.info \
+                       --fail-under-lines 100
+
+    # ── Upload to Codecov (optional) ────────────────────────────
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        files: lcov.info
+        fail_ci_if_error: true
