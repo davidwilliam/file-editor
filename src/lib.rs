@@ -1,14 +1,17 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+//! file_editor – clean, chain-friendly text-file editing
+//!
+//! ```
+//! use file_editor::Editor;
+//! # fn main() -> std::io::Result<()> {
+//! Editor::create("demo.txt")?
+//!     .append("world\n")
+//!     .prepend("hello ")
+//!     .insert_after("hello", " rustaceans!\n", false)
+//!     .save()?;
+//! # Ok(()) }
+//! ```
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+mod editor;
+mod utils;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub use editor::Editor;
