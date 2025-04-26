@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 description = "Clean, elegant API for creating and editing text files"
 license = "MIT"
+repository  = "https://github.com/davidwilliam/file-editor"
 
 [dependencies]
 
