@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+echo "🔍  Running post-commit checks…"
+
+cargo fmt --all -- --check
+cargo clippy --all-targets -- -D warnings
+cargo test --quiet
+cargo llvm-cov --workspace --quiet --fail-under 100
+cargo doc --no-deps -q
+
+echo "✅  All checks passed!"
