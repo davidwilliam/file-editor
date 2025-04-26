@@ -67,7 +67,7 @@ cargo add file-editor      # latest stable
 
 All contributions are released under the **MIT** license.
 
-## 📄  License
+## License
 
 Licensed under
 
