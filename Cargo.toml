@@ -5,3 +5,7 @@ description = "Clean, elegant API for creating and editing text files"
 license = "MIT"
 
 [dependencies]
+
+[dev-dependencies]
+tempfile  = "3"
+pretty_assertions = "1"
