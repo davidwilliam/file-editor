@@ -1,5 +1,10 @@
 # file-editor
 
+[![CI](https://github.com/davidwilliam/file-editor/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/davidwilliam/file-editor/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/davidwilliam/file-editor/branch/master/graph/badge.svg)](https://app.codecov.io/gh/davidwilliam/file-editor)
+[![crates.io](https://img.shields.io/crates/v/file-editor.svg)](https://crates.io/crates/file-editor)
+[![docs.rs](https://img.shields.io/docsrs/file-editor)](https://docs.rs/file-editor)
+
 Clean, chain-friendly **text-file editing for Rust** • *edition&nbsp;2024*
 
 `file-editor` is a zero-dependency library that makes it painless to create,
