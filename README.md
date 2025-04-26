@@ -27,16 +27,16 @@ fn main() -> std::io::Result<()> {
 
 ## Feature table
 
-| Verb | Method | Notes |
-|------|--------|-------|
-| Create / open             | `Editor::create`, `Editor::open` |
-| Rename                    | `rename` |
-| Prepend / append          | `prepend`, `append` |
-| Insert <br>before / after | `insert_before`, `insert_after`<br>`same_indent` flag keeps indentation |
-| Replace one marker        | `replace_marker` |
-| Search pattern            | `find_lines` → 1-based line numbers |
-| Erase, replace, mask      | `erase`, `replace`, `mask` |
-| Save to disk              | `save` |
+| Verb                         | Method(s)                                        | Notes                                             |
+|------------------------------|--------------------------------------------------|---------------------------------------------------|
+| Create / open                | `Editor::create`, `Editor::open`                | `create` truncates if the file already exists     |
+| Rename                       | `rename`                                        | Also updates the internal path held by `Editor`   |
+| Prepend / append             | `prepend`, `append`                             |                                                   |
+| Insert before / after        | `insert_before`, `insert_after`                 | `same_indent` flag keeps original indentation     |
+| Replace one marker           | `replace_marker`                                | Optional `same_indent` flag                       |
+| Search pattern               | `find_lines`                                    | Returns **1-based** line numbers                  |
+| Erase, replace, mask         | `erase`, `replace`, `mask`                      | Operate on *all* occurrences in the buffer        |
+| Save to disk                 | `save`                                          | Writes only when the buffer is dirty              |
 
 Road-map → *regex* feature, streaming mode, companion CLI.
 
