@@ -56,15 +56,17 @@ jobs:
         tool: cargo-llvm-cov
         version: latest
 
-    # ── Coverage (table + lcov) ─────────────────────────────────
+    # ── Coverage (table + lcov) ────────────────────────────
     - name: Generate coverage
+      if: matrix.name == 'default'
       run: |
         cargo llvm-cov --workspace --lcov --output-path lcov.info \
-                       ${{ matrix.FEATURES_ARG }} --fail-under-lines 100
+                        ${{ matrix.FEATURES_ARG }} \
+                        --fail-under-lines 100
 
     # ── Upload to Codecov (only once) ───────────────────────────
     - name: Upload coverage to Codecov
-      if: matrix.name == 'default' && github.ref == 'refs/heads/master'
+      if: matrix.name == 'default'
       uses: codecov/codecov-action@v4
       with:
         files: lcov.info
