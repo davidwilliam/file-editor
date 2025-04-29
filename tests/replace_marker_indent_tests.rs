@@ -1,4 +1,3 @@
-// tests/replace_marker_indent_tests.rs
 use file_editor::Editor;
 
 #[test]

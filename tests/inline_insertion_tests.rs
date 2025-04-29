@@ -1,4 +1,3 @@
-// tests/inline_insertion_tests.rs
 use file_editor::Editor;
 
 /// cover: `insert_after` on the *same line* (`insert_pos == after_marker`)

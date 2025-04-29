@@ -3,6 +3,7 @@ use std::{
     path::{Path, PathBuf},
 };
 
+use crate::pattern::Pattern;
 use crate::utils::line_indent;
 
 /// Handle to a UTF-8 text file kept in memory until [`save`](Editor::save) is called.
@@ -25,8 +26,6 @@ pub struct Editor {
 }
 
 impl Editor {
-    /*──────────────── Constructors ───────────────────────────────*/
-
     /// **Create** or truncate a file and return an editor over it.
     ///
     /// Equivalent to `fs::write(path, "")` followed by [`open`](Editor::open).
@@ -46,8 +45,6 @@ impl Editor {
         })
     }
 
-    /*──────────────── Meta operations ────────────────────────────*/
-
     /// Rename the underlying file on disk **and** update the internal path.
     pub fn rename<P: AsRef<Path>>(&mut self, new_name: P) -> io::Result<&mut Self> {
         fs::rename(&self.path, &new_name)?;
@@ -65,8 +62,6 @@ impl Editor {
         }
         Ok(self)
     }
-
-    /*──────────────── Content operations ────────────────────────*/
 
     /// Insert `text` **at the beginning** of the buffer.
     pub fn prepend(&mut self, text: &str) -> &mut Self {
@@ -164,35 +159,50 @@ impl Editor {
         self
     }
 
-    /// Return **1-based** line numbers where `pattern` appears.
+    /// Return 1-based line numbers where `pattern` occurs.
     ///
-    /// Pass `limit = Some(n)` to cap the number of results.
-    pub fn find_lines(&self, pattern: &str, limit: Option<usize>) -> Vec<usize> {
+    /// Pass `limit = Some(n)` to cap the results.
+    pub fn find_lines<'a, P>(&self, pattern: P, limit: Option<usize>) -> Vec<usize>
+    where
+        P: Into<Pattern<'a>>,
+    {
+        let pat = pattern.into();
         self.buf
             .lines()
             .enumerate()
-            .filter(|(_, line)| line.contains(pattern))
+            .filter(|(_, line)| pat.is_match(line))
             .map(|(i, _)| i + 1)
             .take(limit.unwrap_or(usize::MAX))
             .collect()
     }
 
-    /// Remove every occurrence of `pattern`.
-    pub fn erase(&mut self, pattern: &str) -> &mut Self {
-        self.buf = self.buf.replace(pattern, "");
+    /// Erase _all_ occurrences of `pattern`.
+    pub fn erase<'a, P>(&mut self, pattern: P) -> &mut Self
+    where
+        P: Into<Pattern<'a>>,
+    {
+        let pat = pattern.into();
+        self.buf = pat.replace_all(&self.buf, "");
         self.dirty = true;
         self
     }
 
-    /// Replace every occurrence of `pattern` with `replacement`.
-    pub fn replace(&mut self, pattern: &str, replacement: &str) -> &mut Self {
-        self.buf = self.buf.replace(pattern, replacement);
+    /// Replace _all_ occurrences of `pattern` with `replacement`.
+    pub fn replace<'a, P>(&mut self, pattern: P, replacement: &str) -> &mut Self
+    where
+        P: Into<Pattern<'a>>,
+    {
+        let pat = pattern.into();
+        self.buf = pat.replace_all(&self.buf, replacement);
         self.dirty = true;
         self
     }
 
-    /// Mask every occurrence of `pattern` with `mask` (default: `"***"`).
-    pub fn mask(&mut self, pattern: &str, mask: &str) -> &mut Self {
+    /// Mask _all_ occurrences of `pattern` with `mask`.
+    pub fn mask<'a, P>(&mut self, pattern: P, mask: &str) -> &mut Self
+    where
+        P: Into<Pattern<'a>>,
+    {
         self.replace(pattern, mask)
     }
 }
