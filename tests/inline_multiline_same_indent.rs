@@ -1,4 +1,3 @@
-// tests/inline_multiline_same_indent.rs
 use file_editor::Editor;
 
 #[test]

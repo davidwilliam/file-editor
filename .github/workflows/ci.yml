@@ -11,6 +11,17 @@ jobs:
   test-lint-cov:
     runs-on: ubuntu-latest
 
+    ## ───── Matrix: run with and without the optional feature ─────
+    strategy:
+      matrix:
+        include:
+          - name: default
+            FEATURES_ARG: ""
+          - name: regex
+            FEATURES_ARG: "--features regex"
+
+    name: ${{ matrix.name }}
+
     steps:
     # ── Checkout ────────────────────────────────────────────────
     - uses: actions/checkout@v4
@@ -29,26 +40,33 @@ jobs:
 
     # ── Lint (deny warnings) ────────────────────────────────────
     - name: clippy
-      run: cargo clippy --all-targets -- -D warnings
+      run: cargo clippy --all-targets ${{ matrix.FEATURES_ARG }} -- -D warnings
 
-    # ── Tests & doctests ────────────────────────────────────────
+    # ── Tests ────────────────────────────────────────
     - name: cargo test
-      run: cargo test --all-targets --workspace
+      run: cargo test --workspace --all-targets ${{ matrix.FEATURES_ARG }}
+
+    # ── Docs ────────────────────────────────────────
+    - name: cargo doc
+      run: cargo doc --no-deps --workspace
 
     # ── Install cargo-llvm-cov (pinned) ─────────────────────────
     - uses: taiki-e/install-action@v2
       with:
         tool: cargo-llvm-cov
-        version: latest        # or e.g. 0.6
+        version: latest
 
-    # ── Coverage (table + lcov) ─────────────────────────────────
+    # ── Coverage (table + lcov) ────────────────────────────
     - name: Generate coverage
+      if: matrix.name == 'default'
       run: |
         cargo llvm-cov --workspace --lcov --output-path lcov.info \
-                       --fail-under-lines 100
+                        ${{ matrix.FEATURES_ARG }} \
+                        --fail-under-lines 100
 
-    # ── Upload to Codecov (optional) ────────────────────────────
+    # ── Upload to Codecov (only once) ───────────────────────────
     - name: Upload coverage to Codecov
+      if: matrix.name == 'default'
       uses: codecov/codecov-action@v4
       with:
         files: lcov.info
